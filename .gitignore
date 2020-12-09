@@ -1,0 +1,18 @@
+# venv
+__pycache__
+.Python
+[Bb]in
+[Ii]nclude
+[Ll]ib
+[Ll]ib64
+[Ll]ocal
+[Ss]cripts
+pyvenv.cfg
+.venv
+pip-selfcheck.json
+
+# secret files
+app_values.json
+
+# logs
+log.out
