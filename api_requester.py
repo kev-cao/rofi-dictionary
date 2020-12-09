@@ -44,12 +44,19 @@ class ApiRequester:
         ndefs (Integer): The number of definitions desired.
 
         Returns:
-        list: A list of definitions.
+        dict: A sense's part of speech and its definitions.
         """
-        senses = self.results[idx]['lexicalEntries'][0]['entries'][0]['senses']
+        lexical_entry = self.results[idx]['lexicalEntries'][0]
+        senses = lexical_entry['entries'][0]['senses']
+        senses = [s for s in senses if 'definitions' in s]
+        part_of_speech = lexical_entry['lexicalCategory']['text']
         definitions = []
 
         for i in range(min(ndefs, len(senses))):
             definitions.append(senses[i]['definitions'][0])
 
-        return definitions
+        ret = {}
+        ret['part_of_speech'] = part_of_speech
+        ret['definitions'] = definitions
+
+        return ret
