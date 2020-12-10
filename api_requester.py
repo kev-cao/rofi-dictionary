@@ -1,12 +1,12 @@
-import requests
-import json
+import requests, json, os
 
 class ApiRequester:
     """
     Object that will retrieve data from the Oxford Dictionary API.
     """
     def __init__(self):
-        with open('app_values.json', 'r') as f:
+        filepath = os.path.dirname(os.path.realpath(__file__))
+        with open(f"{filepath}/app_values.json", 'r') as f:
             app_values = json.load(f)
 
         self.app_key = app_values['app_key']

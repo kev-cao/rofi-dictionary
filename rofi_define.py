@@ -1,6 +1,9 @@
+#!/usr/bin/env python3
+
 from subprocess import run, Popen, PIPE
 from api_requester import ApiRequester
-import re, json
+import re, json, os
+
 
 def split_string(s, skip):
     """
@@ -31,7 +34,8 @@ class RofiApp:
     def __init__(self):
         # Some utils.
         # States: ['EXIT', 'DEFINE', 'CATEGORIES', 'DEFINITIONS', 'DETAILED_DEF'] # self.state is the index in the above list.
-        with open('config.json', 'r') as f:
+        filepath = os.path.dirname(os.path.realpath(__file__))
+        with open(f"{filepath}/config.json", 'r') as f:
             self.config = json.load(f)
 
         self.state = 1
