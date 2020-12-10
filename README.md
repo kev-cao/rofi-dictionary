@@ -1,4 +1,4 @@
-# Rofi Dictionary
+# Rofi Dictionary &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/defCoding/rofi-dictionary/blob/master/LICENSE) [![Python version](https://img.shields.io/badge/Python-3.8-blue)](https://www.python.org/downloads/release/python-380/) [![Dictionary API](https://img.shields.io/badge/API-OxfordDictionary-brightgreen)](https://developer.oxforddictionaries.com/)
 A dictionary program that uses Rofi's dMenu as an interface.
 
 ## Context
