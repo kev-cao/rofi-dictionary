@@ -99,7 +99,7 @@ class RofiApp:
                 except KeyError:
                     if query != '':
                         echo = Popen(["echo", "ERROR: Word not found."], stdout=PIPE)
-                        result = run(self.rofi_command + ['-only-match'], stdin=echo.stdout)
+                        result = run(self.rofi_command + ['-no-custom'], stdin=echo.stdout)
                         echo.stdout.close()
                     choice = -1
 
