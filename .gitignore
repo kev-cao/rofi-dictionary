@@ -13,6 +13,3 @@ pip-selfcheck.json
 
 # secret files
 app_values.json
-
-# logs
-log.out
