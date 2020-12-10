@@ -93,7 +93,7 @@ class RofiApp:
                 # DEFINE State - Ask user for word.
                 try:
                     result = run(self.rofi_command + ['-p', 'define:'], capture_output=True, text=True)
-                    query = result.stdout.strip()
+                    query = result.stdout.strip().lower()
                     self.api_req.query(query)
                     choice = 1
                 except KeyError:
