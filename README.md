@@ -20,7 +20,14 @@ $ sudo ln -s /path/to/repo/rofi_dictionary.py rofi_dict
 
 You can set the command to be whatever you want - in the case above, I have it set to `rofi_dict`.
 
-For even more accessibility, I added a key binding in my i3 config that runs the command with Mod+Shift+D.
+For even more accessibility, I added a key binding in my i3 config that runs the command with `Mod+Shift+D`.
 ```
 bindsym $mod+Shift+D exec --no-startup-id rofi_dict
 ```
+
+## Improvements
+Some improvements that I think would make the program better:
+
+- Centered Rofi: I use the `-fixed-num-lines` option to minimize the height of the Rofi window, but that means that when the definitions show up, the window is not centered. I wasn't able to determine how to get Rofi to center itself dynamically when `-fixed-num-lines` was set.
+
+- Better Dictionary Entries: Turns out there's a lot to dictionary APIs (like things called senses), and I didn't really understand all of it. With a better understanding of how the Oxford Dictionary API response is structured, I could augment the dictionary entries in the program.
