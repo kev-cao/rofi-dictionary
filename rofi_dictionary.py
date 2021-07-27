@@ -2,6 +2,7 @@
 
 from subprocess import run, Popen, PIPE
 from api_requester import ApiRequester
+from rapidfuzz import process, fuzz
 import re, json, os
 
 
@@ -33,9 +34,15 @@ def split_string(s, skip):
 class RofiApp:
     def __init__(self):
         # Some utils.
-        # States: ['EXIT', 'DEFINE', 'CATEGORIES', 'DEFINITIONS', 'DETAILED_DEF'] # self.state is the index in the above list.
-        filepath = os.path.dirname(os.path.realpath(__file__))
-        with open(f"{filepath}/config.json", 'r') as f:
+        # States: 
+        #  -1: 'EXIT'
+        #   0: 'WORD_404'
+        #   1: 'DEFINE'
+        #   2: 'CATEGORIES'
+        #   3: 'DEFINITIONS'
+        #   4: 'DETAILED_DEF'
+        self.filepath = os.path.dirname(os.path.realpath(__file__))
+        with open(f"{self.filepath}/config.json", 'r') as f:
             self.config = json.load(f)
 
         self.state = 1
@@ -43,7 +50,7 @@ class RofiApp:
         self.pattern = re.compile(r"(\d+):")
         self.api_req = ApiRequester()
 
-    def display_menu(self, menu, title, back_msg):
+    def display_menu(self, menu, title, back_msg, prev_state, next_state):
         """
         Displays a menu to the user.
 
@@ -51,6 +58,8 @@ class RofiApp:
         menu (list): The menu list.
         title (String): The prompt title to show.
         back_msg (String): The message to show as the back entry.
+        prev_state (Integer): The next state to go to if the user moves backward.
+        next_state (Integer): The next state to go to if the user moves forward.
 
         Return:
         Integer: The index of the menu option chosen, -1 if to go back, None if none chosen.
@@ -58,29 +67,18 @@ class RofiApp:
         rofi_input = back_msg + "\n" + "\n".join(menu)
         echo = Popen(["echo", rofi_input], stdout=PIPE)
         result = run(self.rofi_command + ['-no-custom', '-p', title], stdin=echo.stdout, capture_output=True, text=True).stdout.strip()
+        print(result)
         echo.stdout.close()
 
         if back_msg == result:
+            self.state = prev_state;
             return -1
         elif match := self.pattern.match(result):
+            self.state = next_state;
             return int(match.group(1))
         else:
-            return None
-
-    def next_state(self, choice):
-        """
-        Updates the state from the current state and the user's choice.
-
-        Parameters:
-        choice (Integer): The index of the user's choice from the menu display.
-        """
-        if choice == None:
-            # If the user escapes, then set state to EXIT.
-            self.state = 0
-        else:
-            # Otherwise move state to the prev/next state.
-            offset = -1 if choice == -1 else 1
-            self.state += offset
+            self.state = -1
+            return -1
 
     def run(self):
         """
@@ -88,32 +86,44 @@ class RofiApp:
         """
         # These are used to remember the choices made in previous states when going back.
         defns_choice = defn_choice = 0 
-        while self.state:
-            if self.state == 1:
+        query = ''
+        while self.state != -1:
+            if self.state == 0:
+                # WORD_404 State - Word not found, try fuzzy search.
+                with open(f'{self.filepath}/dictionary.json', 'r') as f:
+                    words = json.load(f)["words"]
+                    closest_words = process.extract(query, words, limit=3, scorer=fuzz.ratio)
+                    options = [f"{idx}: {r[0]}" for idx, r in enumerate(closest_words)]
+
+                choice = self.display_menu(options, f"ERR: Could not find \"{query}\". Did you mean:", "⬅ Go back.", 1, 2)
+                if choice != -1:
+                    query = closest_words[choice][0]
+                    self.api_req.query(query)
+
+            elif self.state == 1:
                 # DEFINE State - Ask user for word.
                 try:
                     result = run(self.rofi_command + ['-p', 'define:'], capture_output=True, text=True)
                     query = result.stdout.strip().lower()
                     self.api_req.query(query)
-                    choice = 1
+                    self.state = 2
                 except KeyError:
                     if query != '':
-                        echo = Popen(["echo", "ERROR: Word not found."], stdout=PIPE)
-                        result = run(self.rofi_command + ['-no-custom'], stdin=echo.stdout)
-                        echo.stdout.close()
-                    choice = -1
+                        self.state = 0
+                    else:
+                        self.state = -1
 
             elif self.state == 2:
                 # CATEGORIES State - Show lexical categories of definitions.
                 categories = self.api_req.get_results_preview()
                 categories = [f"{idx}: {c['text']}" for idx, c in enumerate(categories)]
-                choice = defns_choice = self.display_menu(categories, query, "⬅ Go back.")
+                defns_choice = self.display_menu(categories, query, "⬅ Go back.", 1, 3)
 
             elif self.state == 3:
                 # DEFINITIONS State - Show list of definitions.
                 defns = self.api_req.get_senses_definitions(defns_choice, self.config['num_defns'])['definitions']
                 fdefns = [f"{idx}: {d}" for idx, d in enumerate(defns)]
-                choice = defn_choice = self.display_menu(fdefns, query, "⬅ Go back.")
+                defn_choice = self.display_menu(fdefns, query, "⬅ Go back.", 2, 4)
 
             elif self.state == 4:
                 # DETAILED_DEF State - Show a selected definition in the window.
@@ -123,10 +133,7 @@ class RofiApp:
                 skip = self.config['chars_per_line']
                 defn = split_string(defn, skip)
 
-                choice = self.display_menu([defn], query,"⬅ Go back.")
-
-            self.next_state(choice)
-
+                choice = self.display_menu([defn], query,"⬅ Go back.", 3, 4)
 
 if __name__ == '__main__':
     app = RofiApp()
