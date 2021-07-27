@@ -18,6 +18,14 @@ You must have Rofi installed on your system. Check your distro's package manager
 
 &nbsp;
 
+First install all of the required libraries using the `requirements.txt` file in the repository:
+
+```
+$ pip install -r requirements.txt
+```
+
+&nbsp;
+
 You will also need to set up a JSON file named `app_values.json` in the cloned repo. This will contain the `app_key` and `app_id` needed for the Oxford Dictionary API. To retrieve your values, create an account and application at the [OxfordDictionary website](https://developer.oxforddictionaries.com/). Once you've created your application, get your `app_key` and `app_id` from the API Credentials page.
 
 Fill in the `app_values.json` file as so:
