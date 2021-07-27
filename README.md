@@ -1,4 +1,4 @@
-# Rofi Dictionary &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/defCoding/rofi-dictionary/blob/master/LICENSE) [![Python version](https://img.shields.io/badge/Python-3.8-blue)](https://www.python.org/downloads/release/python-380/) [![Dictionary API](https://img.shields.io/badge/API-OxfordDictionary-brightgreen)](https://developer.oxforddictionaries.com/)
+# Rofi Dictionary &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/defCoding/rofi-dictionary/blob/master/LICENSE) [![Python version](https://img.shields.io/badge/python-3.8-blue)](https://www.python.org/downloads/release/python-380/) [![Dictionary API](https://img.shields.io/badge/api-OxfordDictionary-brightgreen)](https://developer.oxforddictionaries.com/)
 A dictionary program that uses Rofi's dMenu as an interface.
 
 ## Context
@@ -55,3 +55,5 @@ Some improvements that I think would make the program better:
 - **Centered Rofi:** I use the `-fixed-num-lines` option to minimize the height of the Rofi window, but that means that when the definitions show up, the window is not centered. I wasn't able to determine how to get Rofi to center itself dynamically when `-fixed-num-lines` was set.
 
 - **Better Dictionary Entries:** Turns out there's a lot to dictionary APIs (like things called senses), and I didn't really understand all of it. With a better understanding of how the Oxford Dictionary API response is structured, I could augment the dictionary entries in the program.
+
+- **Misspelling Correction:** If you provide the dictionary a misspelled word, it'll give you an error. I'd prefer for it to give you a couple of options for corrections. The API may allow for this, but I will have to look into it further.
