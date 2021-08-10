@@ -18,6 +18,14 @@ You must have Rofi installed on your system. Check your distro's package manager
 
 &nbsp;
 
+First install all of the required libraries using the `requirements.txt` file in the repository:
+
+```
+$ pip install -r requirements.txt
+```
+
+&nbsp;
+
 You will also need to set up a JSON file named `app_values.json` in the cloned repo. This will contain the `app_key` and `app_id` needed for the Oxford Dictionary API. To retrieve your values, create an account and application at the [OxfordDictionary website](https://developer.oxforddictionaries.com/). Once you've created your application, get your `app_key` and `app_id` from the API Credentials page.
 
 Fill in the `app_values.json` file as so:
@@ -55,5 +63,3 @@ Some improvements that I think would make the program better:
 - **Centered Rofi:** I use the `-fixed-num-lines` option to minimize the height of the Rofi window, but that means that when the definitions show up, the window is not centered. I wasn't able to determine how to get Rofi to center itself dynamically when `-fixed-num-lines` was set.
 
 - **Better Dictionary Entries:** Turns out there's a lot to dictionary APIs (like things called senses), and I didn't really understand all of it. With a better understanding of how the Oxford Dictionary API response is structured, I could augment the dictionary entries in the program.
-
-- **Misspelling Correction:** If you provide the dictionary a misspelled word, it'll give you an error. I'd prefer for it to give you a couple of options for corrections. The API may allow for this, but I will have to look into it further.
